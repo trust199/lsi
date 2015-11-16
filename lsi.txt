@@ -1,0 +1,35 @@
+library(tm)
+#Importazione del corpus 'crude'
+crude <- system.file("texts", "crude", package = "tm")
+reutersA <- Corpus(DirSource(crude), readerControl = list(reader = readReut21578XMLasPlain))
+ 
+#Importazione del corpus 'acq'
+acq <- system.file("texts", "acq", package = "tm")
+reutersB <- Corpus(DirSource(acq), readerControl = list(reader = readReut21578XMLasPlain))
+ 
+#Unione in un unico corpus
+multicorpus <- c(reutersA, reutersB)
+ 
+#Pre-Processing
+ 
+corpus <- tm_map(multicorpus , content_transformer(tolower))
+corpus <- tm_map(corpus , removePunctuation) #Rimozione punti
+corpus <- tm_map(corpus , removeNumbers) #Rimozione numeri
+corpus <- tm_map(corpus , removeWords, stopwords("english"))
+corpus <- tm_map(corpus , stripWhitespace)
+ 
+#Creazione matrice termini-documenti
+tdm <- TermDocumentMatrix(multicorpus)
+ 
+#Rimozione della sparsità
+stdm <- removeSparseTerms(tdm, sparse = 0.4)
+stdm.matrix <- as.matrix(stdm)
+stdm.svd <- svd(stdm.matrix)
+ 
+#Latent Semantic Indexing
+ 
+docM <- stdm.svd$u %*% diag(c(stdm.svd$d[1:2], rep(0,4))) %*% t(stdm.svd$v)
+
+
+
+qr(data.matrix)$r ####################rank matrice

@@ -1,0 +1,48 @@
+
+#dimostrare di essere in grado di effettuare una Lreatent Semantic Analysis 
+#utilizzando una Low-Rank Approximation di rango 5
+
+ round(svd(data.matrix)$d,2)
+ length(which(round(svd(data.matrix)$d,2)>0))
+ data.matrix.r_5 <- svd(data.matrix)$u %*% diag(c(svd(data.matrix)$d[1:5], rep(0,20))) %*% t(svd(data.matrix)$v)
+
+#dovranno essere semplicemente riportate in modo grafico le correlazioni nello spazio dei token e in quello dei documenti.
+
+ require(ellipse)
+ plotcorr(cor(data.matrix.r_5))
+ plotcorr(cor(t(data.matrix.r_5)))
+
+l1<-diag
+svd(data.matrix)$u[,1:21] %*% diag(c(svd(data.matrix)$d[1:5], rep(0,20))) %*% t(svd(data.matrix)$v[,1:21])
+
+qr(data.matrix)$r ####################rank matrice
+
+
+
+
+
+
+
+
+
+
+La matrice originale ha dimensione MxN (righe x colonne), e diciamo che il vettore contenuto in $d ha lunghezza R. Di conseguenza la matrice in $u ha dimensioni MxR, la matrice in $v ha dimensione RxN e la matrice che vai a creare con la funzione diag ha dimensioni RxR.
+Quando vai a fare il prodotto matriciale fra queste 3 matrici le dimensioni R devono coincidere pertanto se la matrice di mezzo che crei con la funzione diag la crei prendendo solo i primi due valori di $d in questo modo
+
+diag(svd$d[1:2])
+
+le dimensioni non coincidono più perché ora la matrice di mezzo ha dimensioni 2x2 e non RxR, se fai invece
+
+diag(c(svd$d[1:2], rep(0,7))
+
+di nuovo le dimensioni non coincidono perché la matrice che viene creata è 9x9 (2+7). A noi serve una matrice che sia RxR e, dato che nel nostro caso R = 6, ci serve una matrice 6x6 da cui 
+
+diag(c(svd$d[1:2], rep(0,4))
+
+Avresti ottenuto lo stesso risultato scrivendo (in maniera forse più intuitiva)
+
+docM <- stdm.svd$u[,1:2] %*% diag(stdm.svd$d[1:2]) %*% t(stdm.svd$v[,1:2])
+
+in modo da ridurre la dimensione R di tutte e 3 le matrici da 6 a 2
+
+
